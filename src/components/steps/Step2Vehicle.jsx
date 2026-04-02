@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { getBrands, getModels, getVariants } from '../../data/vehicles.js'
+import { trackEvent } from '../../utils/analytics.js'
 
 // Brand colour map for visual variety
 const BRAND_COLORS = {
@@ -41,6 +42,7 @@ export default function Step2Vehicle({ calculator }) {
   function handleBrand(brand) {
     selectBrand(brand)
     setLevel(1)
+    trackEvent('brand_selected', { brand })
   }
 
   function handleModel(model) {
@@ -50,6 +52,12 @@ export default function Step2Vehicle({ calculator }) {
 
   function handleVariant(variantName) {
     updateInput('selectedVariant', variantName)
+    const varData = variants.find(v => v.name === variantName)
+    trackEvent('vehicle_selected', {
+      vehicle: variantName,
+      brand: inputs.selectedBrand,
+      price: varData?.price_driveaway,
+    })
   }
 
   function goBackTo(l) {

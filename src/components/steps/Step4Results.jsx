@@ -1,6 +1,8 @@
+import { useEffect } from 'react'
 import ResultsColumn from '../ResultsColumn.jsx'
 import TradeInComparison from '../TradeInComparison.jsx'
 import { STATE_DATA } from '../../data/stateCosts.js'
+import { trackEvent } from '../../utils/analytics.js'
 
 function fmt(n) {
   if (!n || isNaN(n)) return '$—'
@@ -23,6 +25,17 @@ export default function Step4Results({ calculator, onGetQuote }) {
 
   const { novated, carLoan, cash, summary, lowSalaryWarning, overSacrificeWarning } = results
   const stateInfo = STATE_DATA[inputs.state]
+
+  // Track results_viewed once when this step renders with valid results
+  useEffect(() => {
+    trackEvent('results_viewed', {
+      vehicle: vehicleData?.name,
+      salary: inputs.grossSalary,
+      weeklySaving: summary?.weeklyTakeHomeSaving,
+      state: inputs.state,
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div>

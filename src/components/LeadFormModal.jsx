@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { trackEvent } from '../utils/analytics.js'
 
 const AU_PHONE_RE = /^04\d{2}[\s-]?\d{3}[\s-]?\d{3}$/
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -64,6 +65,11 @@ export default function LeadFormModal({ results, vehicleData, inputs, onClose })
     }
     const existing = JSON.parse(localStorage.getItem('evleasecalc_leads') || '[]')
     localStorage.setItem('evleasecalc_leads', JSON.stringify([...existing, lead]))
+    trackEvent('quote_submitted', {
+      vehicle: vehicleData?.name,
+      salary: inputs.grossSalary,
+      provider: form.provider,
+    })
     setSubmitted(true)
   }
 
